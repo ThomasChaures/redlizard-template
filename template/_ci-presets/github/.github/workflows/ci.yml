@@ -1,0 +1,31 @@
+name: CI
+
+# Corre en cada PR hacia main o develop:
+#  - Levanta una base limpia y aplica TODAS las migraciones (valida que no estén rotas).
+#  - Verifica que los tipos commiteados estén sincronizados con el esquema.
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v2
+        with:
+          version: latest
+
+      # Aplica todas las migraciones sobre una base Postgres limpia.
+      - run: supabase db start
+
+      # Falla si los tipos generados no coinciden con el esquema (se olvidaron de `npm run db:types`).
+      - name: Verificar que los tipos estén actualizados
+        run: |
+          supabase gen types typescript --local > src/lib/supabase/database.types.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet src/lib/supabase/database.types.ts; then
+            echo "::error::Los tipos están desactualizados. Corré 'npm run db:types' y commiteá el resultado."
+            git diff src/lib/supabase/database.types.ts
+            exit 1
+          fi

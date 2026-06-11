@@ -1,0 +1,56 @@
+# Bitbucket Pipelines — deploy de migraciones de Supabase.
+#
+#   develop -> proyecto de STAGING
+#   main    -> proyecto de PRODUCCIÓN
+#
+# Cargá las variables en cada Deployment de Bitbucket
+# (Repository settings -> Deployments -> staging / production):
+#   SUPABASE_ACCESS_TOKEN   (personal access token de tu cuenta Supabase)
+#   SUPABASE_DB_PASSWORD    (password de la base de ESE proyecto, marcala como Secured)
+#   SUPABASE_PROJECT_ID     (project-ref de ESE proyecto)
+#
+# La CLI de Supabase ya es devDependency del proyecto: se usa con `npx supabase`.
+
+image: node:20
+
+definitions:
+  services:
+    docker:
+      memory: 3072
+  steps:
+    - step: &deploy-migrations
+        name: Deploy migraciones
+        caches:
+          - node
+        script:
+          - npm ci
+          - npx supabase link --project-ref "$SUPABASE_PROJECT_ID"
+          - npx supabase db push --dry-run
+          - npx supabase db push
+
+pipelines:
+  branches:
+    develop:
+      - step:
+          <<: *deploy-migrations
+          name: "Migraciones -> staging"
+          deployment: staging
+    main:
+      - step:
+          <<: *deploy-migrations
+          name: "Migraciones -> production"
+          deployment: production
+
+  pull-requests:
+    "**":
+      - step:
+          name: Validar migraciones (base limpia)
+          services:
+            - docker
+          caches:
+            - node
+          script:
+            - npm ci
+            - npx supabase db start
+            - npx supabase gen types typescript --local > /tmp/types.gen.ts
+            - diff -q /tmp/types.gen.ts src/lib/supabase/database.types.ts || (echo "Tipos desactualizados: corré 'npm run db:types'"; exit 1)

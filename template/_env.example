@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────────────────────
+#  {{PROJECT_NAME}} — variables de entorno
+#  Copiá este archivo a .env.local y completá los valores.
+#  NUNCA commitees .env.local (ya está en .gitignore).
+# ─────────────────────────────────────────────────────────────
+
+# Públicas: viajan al browser. Sólo claves "publishable", seguras junto con RLS.
+# Dashboard → Connect → App Frameworks  (o Settings → API Keys)
+NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxxxxxxxxxxxxxxxxxxx
+
+# ─────────────────────────────────────────────────────────────
+#  SOLO SERVIDOR — jamás con prefijo NEXT_PUBLIC_, jamás en el browser.
+#  Esta clave evita (bypassea) RLS. Usala únicamente en código server
+#  con import "server-only" y para tareas administrativas puntuales.
+# ─────────────────────────────────────────────────────────────
+SUPABASE_SECRET_KEY=sb_secret_xxxxxxxxxxxxxxxxxxxx

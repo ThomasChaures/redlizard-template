@@ -1,0 +1,44 @@
+{
+  "name": "redlizard-template",
+  "version": "0.1.0",
+  "description": "Scaffolder de proyectos Next.js + TypeScript + Supabase con seguridad end-to-end y tooling de Claude Code (MCP + Skills) preconfigurado.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "bin": {
+    "redlizard-template": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TU-USUARIO/redlizard-template.git"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "nextjs",
+    "supabase",
+    "typescript",
+    "scaffold",
+    "starter",
+    "claude-code"
+  ],
+  "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^6.0.3"
+  }
+}

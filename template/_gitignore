@@ -1,0 +1,30 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.*
+
+# next
+/.next/
+/out/
+/build
+next-env.d.ts
+
+# entorno — NUNCA commitear secretos
+.env
+.env.local
+.env*.local
+
+# supabase (estado local)
+/supabase/.branches
+/supabase/.temp
+/supabase/.env
+
+# logs / SO / editor
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# tipos generados (se regeneran con `npm run db:types`)
+# (dejalos versionados si preferís; por defecto los ignoramos)
