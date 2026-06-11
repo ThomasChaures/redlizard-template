@@ -3,8 +3,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Handler de confirmación de email. Supabase envía un enlace con token_hash y type.
- * Intercambia el token por una sesión y redirige.
+ * Email confirmation handler. Supabase sends a link with token_hash and type.
+ * Exchanges the token for a session and redirects.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

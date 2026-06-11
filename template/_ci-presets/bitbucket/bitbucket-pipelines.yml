@@ -1,15 +1,15 @@
-# Bitbucket Pipelines — deploy de migraciones de Supabase.
+# Bitbucket Pipelines — Supabase migration deploys.
 #
-#   develop -> proyecto de STAGING
-#   main    -> proyecto de PRODUCCIÓN
+#   develop -> STAGING project
+#   main    -> PRODUCTION project
 #
-# Cargá las variables en cada Deployment de Bitbucket
+# Set the variables in each Bitbucket Deployment
 # (Repository settings -> Deployments -> staging / production):
-#   SUPABASE_ACCESS_TOKEN   (personal access token de tu cuenta Supabase)
-#   SUPABASE_DB_PASSWORD    (password de la base de ESE proyecto, marcala como Secured)
-#   SUPABASE_PROJECT_ID     (project-ref de ESE proyecto)
+#   SUPABASE_ACCESS_TOKEN   (personal access token of your Supabase account)
+#   SUPABASE_DB_PASSWORD    (database password for THAT project, mark it as Secured)
+#   SUPABASE_PROJECT_ID     (project-ref of THAT project)
 #
-# La CLI de Supabase ya es devDependency del proyecto: se usa con `npx supabase`.
+# The Supabase CLI is already a devDependency: it's used via `npx supabase`.
 
 image: node:20
 
@@ -19,7 +19,7 @@ definitions:
       memory: 3072
   steps:
     - step: &deploy-migrations
-        name: Deploy migraciones
+        name: Deploy migrations
         caches:
           - node
         script:
@@ -33,18 +33,18 @@ pipelines:
     develop:
       - step:
           <<: *deploy-migrations
-          name: "Migraciones -> staging"
+          name: "Migrations -> staging"
           deployment: staging
     main:
       - step:
           <<: *deploy-migrations
-          name: "Migraciones -> production"
+          name: "Migrations -> production"
           deployment: production
 
   pull-requests:
     "**":
       - step:
-          name: Validar migraciones (base limpia)
+          name: Validate migrations (clean database)
           services:
             - docker
           caches:
@@ -53,4 +53,4 @@ pipelines:
             - npm ci
             - npx supabase db start
             - npx supabase gen types typescript --local > /tmp/types.gen.ts
-            - diff -q /tmp/types.gen.ts src/lib/supabase/database.types.ts || (echo "Tipos desactualizados: corré 'npm run db:types'"; exit 1)
+            - diff -q /tmp/types.gen.ts src/lib/supabase/database.types.ts || (echo "Types out of date: run 'npm run db:types'"; exit 1)

@@ -3,9 +3,9 @@ import { clientEnv } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 /**
- * Cliente para Client Components (corre en el browser).
- * createBrowserClient ya usa un singleton interno: podés llamarlo sin miedo.
- * Usa la clave PUBLISHABLE; la seguridad real la imponen las políticas RLS.
+ * Client for Client Components (runs in the browser).
+ * createBrowserClient already uses an internal singleton: you can call it freely.
+ * Uses the PUBLISHABLE key; real security is enforced by RLS policies.
  */
 export function createClient() {
   return createBrowserClient<Database>(

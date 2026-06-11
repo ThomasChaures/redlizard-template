@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
   const supabase = await createClient();
-  // En server validamos el JWT con getClaims(), nunca getSession().
+  // On the server we validate the JWT with getClaims(), never getSession().
   const {
     data: { claims },
   } = await supabase.auth.getClaims();
@@ -12,15 +12,15 @@ export default async function Home() {
     <main>
       <div className="card">
         <h1>{{PROJECT_NAME}}</h1>
-        <p className="muted">Next.js + Supabase con seguridad end-to-end.</p>
+        <p className="muted">Next.js + Supabase with end-to-end security.</p>
 
         {claims ? (
           <>
-            <div className="kv">Sesión activa: {claims.email ?? claims.sub}</div>
+            <div className="kv">Signed in as: {claims.email ?? claims.sub}</div>
             <div className="row">
               <Link href="/dashboard" style={{ flex: 1 }}>
                 <button className="primary" style={{ width: "100%" }}>
-                  Ir al dashboard
+                  Go to dashboard
                 </button>
               </Link>
             </div>
@@ -29,7 +29,7 @@ export default async function Home() {
           <div className="row">
             <Link href="/login" style={{ flex: 1 }}>
               <button className="primary" style={{ width: "100%" }}>
-                Ingresar
+                Sign in
               </button>
             </Link>
           </div>

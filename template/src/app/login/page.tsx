@@ -10,14 +10,14 @@ export default async function LoginPage({
   return (
     <main>
       <div className="card">
-        <h1>Ingresar</h1>
-        <p className="muted">Accedé con tu email y contraseña.</p>
+        <h1>Sign in</h1>
+        <p className="muted">Sign in with your email and password.</p>
 
         <form>
           <label htmlFor="email">Email</label>
           <input id="email" name="email" type="email" autoComplete="email" required />
 
-          <label htmlFor="password">Contraseña</label>
+          <label htmlFor="password">Password</label>
           <input
             id="password"
             name="password"
@@ -30,9 +30,9 @@ export default async function LoginPage({
 
           <div className="row">
             <button className="primary" formAction={login}>
-              Ingresar
+              Sign in
             </button>
-            <button formAction={signup}>Crear cuenta</button>
+            <button formAction={signup}>Create account</button>
           </div>
         </form>
       </div>

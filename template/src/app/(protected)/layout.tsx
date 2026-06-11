@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Defensa en profundidad: además del proxy, cada layout protegido vuelve a
- * validar el JWT en el servidor con getClaims(). Nunca confiar sólo en el proxy.
+ * Defense in depth: on top of the proxy, every protected layout re-validates
+ * the JWT on the server with getClaims(). Never trust the proxy alone.
  */
 export default async function ProtectedLayout({
   children,

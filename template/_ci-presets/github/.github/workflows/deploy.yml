@@ -1,14 +1,14 @@
-name: Deploy migraciones
+name: Deploy migrations
 
-# Al mergear/pushear:
-#   develop -> aplica migraciones al proyecto de STAGING
-#   main    -> aplica migraciones al proyecto de PRODUCCIÓN
+# On merge/push:
+#   develop -> applies migrations to the STAGING project
+#   main    -> applies migrations to the PRODUCTION project
 #
-# Cada entorno es un proyecto Supabase distinto. Configurá los secrets por
+# Each environment is a separate Supabase project. Configure the secrets per
 # GitHub Environment (Settings -> Environments -> staging / production):
-#   SUPABASE_ACCESS_TOKEN   (personal access token de tu cuenta)
-#   SUPABASE_DB_PASSWORD    (password de la base de ESE proyecto)
-#   SUPABASE_PROJECT_ID     (project-ref de ESE proyecto)
+#   SUPABASE_ACCESS_TOKEN   (personal access token of your account)
+#   SUPABASE_DB_PASSWORD    (database password for THAT project)
+#   SUPABASE_PROJECT_ID     (project-ref of THAT project)
 on:
   push:
     branches: [main, develop]
@@ -16,7 +16,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Mapea la branch al Environment correcto (y a sus secrets).
+    # Maps the branch to the correct Environment (and its secrets).
     environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -29,12 +29,12 @@ jobs:
         with:
           version: latest
 
-      - name: Link al proyecto del entorno
+      - name: Link to the environment's project
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
-      # Buena práctica: ver qué se va a aplicar antes de aplicarlo (queda en los logs).
-      - name: Previsualizar migraciones pendientes
+      # Best practice: review what will be applied before applying it (kept in the logs).
+      - name: Preview pending migrations
         run: supabase db push --dry-run
 
-      - name: Aplicar migraciones
+      - name: Apply migrations
         run: supabase db push

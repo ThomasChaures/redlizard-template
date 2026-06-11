@@ -1,13 +1,13 @@
-# GitLab CI — deploy de migraciones de Supabase.
+# GitLab CI — Supabase migration deploys.
 #
-#   develop -> proyecto de STAGING
-#   main    -> proyecto de PRODUCCIÓN
+#   develop -> STAGING project
+#   main    -> PRODUCTION project
 #
-# Cargá las variables en Settings -> CI/CD -> Variables, scopeadas por environment
-# (o protegidas/enmascaradas según corresponda):
-#   SUPABASE_ACCESS_TOKEN   (personal access token de tu cuenta Supabase)
-#   SUPABASE_DB_PASSWORD    (password de la base de ESE proyecto, marcala como Masked)
-#   SUPABASE_PROJECT_ID     (project-ref de ESE proyecto)
+# Set the variables in Settings -> CI/CD -> Variables, scoped per environment
+# (protected/masked as appropriate):
+#   SUPABASE_ACCESS_TOKEN   (personal access token of your Supabase account)
+#   SUPABASE_DB_PASSWORD    (database password for THAT project, mark it as Masked)
+#   SUPABASE_PROJECT_ID     (project-ref of THAT project)
 
 image: node:20
 
@@ -15,7 +15,7 @@ stages:
   - validate
   - deploy
 
-# Valida que las migraciones apliquen en una base limpia y que los tipos estén al día.
+# Validates that migrations apply on a clean database and that types are current.
 validate:migrations:
   stage: validate
   services:
@@ -26,7 +26,7 @@ validate:migrations:
     - npm ci
     - npx supabase db start
     - npx supabase gen types typescript --local > /tmp/types.gen.ts
-    - diff -q /tmp/types.gen.ts src/lib/supabase/database.types.ts || (echo "Tipos desactualizados: corré 'npm run db:types'"; exit 1)
+    - diff -q /tmp/types.gen.ts src/lib/supabase/database.types.ts || (echo "Types out of date: run 'npm run db:types'"; exit 1)
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 

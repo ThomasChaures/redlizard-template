@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 /**
  * Content-Security-Policy.
- * Ajustá los hosts a tu proyecto Supabase y a terceros que uses (analytics, etc.).
- * `connect-src` debe permitir tu URL de Supabase (REST/Realtime/Storage).
+ * Adjust the hosts to your Supabase project and any third parties you use (analytics, etc.).
+ * `connect-src` must allow your Supabase URL (REST/Realtime/Storage).
  */
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://*.supabase.co";
 

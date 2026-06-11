@@ -5,10 +5,10 @@ import { clientEnv } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 /**
- * Cliente para Server Components, Server Actions y Route Handlers.
- * Lee la sesión del usuario desde las cookies, por lo que respeta RLS.
+ * Client for Server Components, Server Actions and Route Handlers.
+ * Reads the user session from cookies, so it respects RLS.
  *
- * Creá uno nuevo por request: es liviano y necesita las cookies de esa request.
+ * Create a new one per request: it's lightweight and needs that request's cookies.
  */
 export async function createClient() {
   const cookieStore = await cookies();
@@ -27,8 +27,8 @@ export async function createClient() {
               cookieStore.set(name, value, options);
             }
           } catch {
-            // setAll desde un Server Component falla (no puede escribir cookies).
-            // El proxy (proxy.ts / middleware) ya refresca la sesión, así que es seguro ignorarlo.
+            // setAll from a Server Component throws (it can't write cookies).
+            // The proxy already refreshes the session, so it's safe to ignore.
           }
         },
       },

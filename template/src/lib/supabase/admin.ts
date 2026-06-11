@@ -5,21 +5,21 @@ import { serverEnv } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 /**
- * ⚠️  Cliente ADMIN: usa la SECRET KEY y BYPASSEA RLS por completo.
+ * ⚠️  ADMIN client: uses the SECRET KEY and BYPASSES RLS entirely.
  *
- * Reglas:
- *  - Sólo desde código server (este módulo importa "server-only").
- *  - Nunca lo pases a un Server/Client Component ni lo expongas en una respuesta.
- *  - Usalo sólo para operaciones administrativas controladas (webhooks, jobs,
- *    crear usuarios, etc.), validando vos mismo la autorización.
- *  - Para todo lo que represente acción "del usuario", usá el cliente de server.ts
- *    (respeta RLS).
+ * Rules:
+ *  - Server code only (this module imports "server-only").
+ *  - Never pass it to a Server/Client Component or expose it in a response.
+ *  - Use it only for controlled administrative operations (webhooks, jobs,
+ *    creating users, etc.), validating authorization yourself.
+ *  - For anything representing a "user" action, use the client from server.ts
+ *    (which respects RLS).
  */
 export function createAdminClient() {
   const env = serverEnv();
   if (!env.SUPABASE_SECRET_KEY) {
     throw new Error(
-      "SUPABASE_SECRET_KEY no está configurada. Es obligatoria para el cliente admin.",
+      "SUPABASE_SECRET_KEY is not configured. It is required for the admin client.",
     );
   }
 

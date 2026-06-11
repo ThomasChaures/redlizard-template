@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 /**
- * Validación de variables de entorno en tiempo de arranque/compilación.
- * Si falta o está mal una variable, el proceso falla rápido con un mensaje claro
- * en lugar de romper silenciosamente en runtime.
+ * Validate environment variables at startup/build time.
+ * If a variable is missing or malformed, the process fails fast with a clear
+ * message instead of breaking silently at runtime.
  *
- * IMPORTANTE: las variables del servidor (sin NEXT_PUBLIC_) sólo deben leerse
- * desde código server. Next reemplaza `process.env.NEXT_PUBLIC_*` en build, y
- * mantiene el resto fuera del bundle del cliente.
+ * IMPORTANT: server variables (without NEXT_PUBLIC_) must only be read from
+ * server code. Next replaces `process.env.NEXT_PUBLIC_*` at build time and keeps
+ * everything else out of the client bundle.
  */
 
 const clientSchema = z.object({
@@ -21,14 +21,14 @@ const serverSchema = z.object({
 });
 
 function format(error: z.ZodError): never {
-  console.error("❌ Variables de entorno inválidas:");
+  console.error("❌ Invalid environment variables:");
   for (const issue of error.issues) {
     console.error(`  • ${issue.path.join(".")}: ${issue.message}`);
   }
-  throw new Error("Revisá tu archivo .env.local (ver .env.example).");
+  throw new Error("Check your .env.local file (see .env.example).");
 }
 
-// Estas dos referencias deben ser estáticas para que Next las inserte en build.
+// These two references must be static so Next can inline them at build time.
 const clientParsed = clientSchema.safeParse({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
@@ -38,7 +38,7 @@ if (!clientParsed.success) format(clientParsed.error);
 export const clientEnv = clientParsed.data;
 
 /**
- * Sólo invocar desde código server. Lee y valida las variables sensibles.
+ * Only call from server code. Reads and validates the sensitive variables.
  */
 export function serverEnv() {
   const parsed = serverSchema.safeParse(process.env);

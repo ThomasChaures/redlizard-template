@@ -1,7 +1,7 @@
 -- ─────────────────────────────────────────────────────────────
---  Migración inicial — seguridad por defecto
---  Regla de oro: RLS habilitado en TODAS las tablas del esquema public.
---  Con RLS activo y sin políticas, el acceso queda denegado por defecto.
+--  Initial migration — secure by default
+--  Golden rule: RLS enabled on ALL tables in the public schema.
+--  With RLS on and no policies, access is denied by default.
 -- ─────────────────────────────────────────────────────────────
 
 create table if not exists public.profiles (
@@ -10,20 +10,20 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
--- Habilitar Row Level Security (deny-by-default).
+-- Enable Row Level Security (deny-by-default).
 alter table public.profiles enable row level security;
 
--- Forzar RLS incluso para el owner de la tabla.
+-- Force RLS even for the table owner.
 alter table public.profiles force row level security;
 
--- Cada usuario puede LEER su propia fila.
+-- Each user can READ their own row.
 create policy "profiles_select_own"
   on public.profiles
   for select
   to authenticated
   using ((select auth.uid()) = id);
 
--- Cada usuario puede ACTUALIZAR su propia fila.
+-- Each user can UPDATE their own row.
 create policy "profiles_update_own"
   on public.profiles
   for update
@@ -31,13 +31,13 @@ create policy "profiles_update_own"
   using ((select auth.uid()) = id)
   with check ((select auth.uid()) = id);
 
--- Nota: NO definimos política de INSERT/DELETE para el rol authenticated.
--- La fila se crea automáticamente vía trigger (abajo). Definí políticas
--- adicionales sólo cuando una funcionalidad concreta lo requiera.
+-- Note: we do NOT define an INSERT/DELETE policy for the authenticated role.
+-- The row is created automatically via the trigger (below). Add extra policies
+-- only when a concrete feature requires it.
 
 -- ─────────────────────────────────────────────────────────────
---  Crear el perfil automáticamente al registrarse un usuario.
---  SECURITY DEFINER + search_path fijo para evitar secuestro de funciones.
+--  Create the profile automatically when a user signs up.
+--  SECURITY DEFINER + fixed search_path to prevent function hijacking.
 -- ─────────────────────────────────────────────────────────────
 create or replace function public.handle_new_user()
 returns trigger

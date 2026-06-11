@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
 
-  // Sólo cerramos sesión si efectivamente hay un usuario válido.
+  // Only sign out if there's actually a valid user.
   const {
     data: { claims },
   } = await supabase.auth.getClaims();

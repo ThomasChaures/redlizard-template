@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { clientEnv } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
-// Rutas accesibles sin sesión. Todo lo demás exige usuario autenticado.
+// Routes reachable without a session. Everything else requires an authenticated user.
 const PUBLIC_PATHS = ["/", "/login", "/auth", "/error"];
 
 function isPublic(pathname: string): boolean {
@@ -13,12 +13,12 @@ function isPublic(pathname: string): boolean {
 }
 
 /**
- * Refresca la sesión en cada request y protege rutas.
+ * Refreshes the session on every request and protects routes.
  *
- * Reglas de oro:
- *  - NO ejecutes código entre createServerClient y getClaims().
- *  - Usá getClaims() (valida la firma del JWT). Nunca getSession() en server.
- *  - Devolvé SIEMPRE el `supabaseResponse` para no perder las cookies refrescadas.
+ * Golden rules:
+ *  - Do NOT run code between createServerClient and getClaims().
+ *  - Use getClaims() (validates the JWT signature). Never getSession() on the server.
+ *  - ALWAYS return `supabaseResponse` so the refreshed cookies aren't lost.
  */
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let supabaseResponse = NextResponse.next({ request });
@@ -44,7 +44,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     },
   );
 
-  // Valida el JWT contra las llaves públicas del proyecto (no confía en la cookie cruda).
+  // Validates the JWT against the project's public keys (doesn't trust the raw cookie).
   const {
     data: { claims },
   } = await supabase.auth.getClaims();

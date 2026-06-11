@@ -6,8 +6,8 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 const credentials = z.object({
-  email: z.string().email("Email inválido."),
-  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
+  email: z.string().email("Invalid email."),
+  password: z.string().min(8, "Password must be at least 8 characters."),
 });
 
 function parse(formData: FormData) {
@@ -20,7 +20,7 @@ function parse(formData: FormData) {
 export async function login(formData: FormData) {
   const parsed = parse(formData);
   if (!parsed.success) {
-    const msg = parsed.error.issues[0]?.message ?? "Datos inválidos.";
+    const msg = parsed.error.issues[0]?.message ?? "Invalid input.";
     redirect(`/login?error=${encodeURIComponent(msg)}`);
   }
 
@@ -28,7 +28,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent("Credenciales incorrectas.")}`);
+    redirect(`/login?error=${encodeURIComponent("Invalid credentials.")}`);
   }
 
   revalidatePath("/", "layout");
@@ -38,7 +38,7 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const parsed = parse(formData);
   if (!parsed.success) {
-    const msg = parsed.error.issues[0]?.message ?? "Datos inválidos.";
+    const msg = parsed.error.issues[0]?.message ?? "Invalid input.";
     redirect(`/login?error=${encodeURIComponent(msg)}`);
   }
 
@@ -49,6 +49,6 @@ export async function signup(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  // Si la confirmación por email está activa, el usuario debe confirmar primero.
-  redirect(`/login?error=${encodeURIComponent("Revisá tu email para confirmar la cuenta.")}`);
+  // If email confirmation is enabled, the user must confirm first.
+  redirect(`/login?error=${encodeURIComponent("Check your email to confirm your account.")}`);
 }

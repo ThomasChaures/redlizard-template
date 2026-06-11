@@ -1,5 +1,5 @@
-# Configuración del proyecto local de Supabase CLI.
-# Ejecutá `supabase link --project-ref <ref>` para asociarlo a tu proyecto remoto.
+# Local Supabase CLI project configuration.
+# Run `supabase link --project-ref <ref>` to associate it with your remote project.
 project_id = "{{PROJECT_NAME}}"
 
 [api]
@@ -19,7 +19,7 @@ port = 54323
 
 [auth]
 enabled = true
-# URL del sitio para enlaces de confirmación/recuperación.
+# Site URL for confirmation/recovery links.
 site_url = "http://localhost:3000"
 additional_redirect_urls = ["http://localhost:3000/auth/confirm"]
 jwt_expiry = 3600

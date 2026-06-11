@@ -1,12 +1,12 @@
 /**
- * Tipos generados de tu base de datos Supabase.
+ * Generated types for your Supabase database.
  *
- * Regeneralos cada vez que cambie el esquema:
+ * Regenerate them whenever the schema changes:
  *
  *   npm run db:types
  *   # (= supabase gen types typescript --local > src/lib/supabase/database.types.ts)
  *
- * Este archivo es un placeholder para que el proyecto tipe-checkee desde el inicio.
+ * This file is a placeholder so the project type-checks from the start.
  */
 export type Json =
   | string

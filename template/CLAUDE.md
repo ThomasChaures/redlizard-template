@@ -1,43 +1,57 @@
 # {{PROJECT_NAME}}
 
-Proyecto Next.js 16 (App Router) + TypeScript + Supabase con seguridad end-to-end.
+Next.js 16 (App Router) + TypeScript + Supabase project with end-to-end security.
 
 ## Stack
 
-- **Next.js 16** (App Router, Server Components, `proxy.ts` en lugar de `middleware.ts`).
-- **Supabase** vía `@supabase/ssr` (auth por cookies, RLS).
-- **Zod** para validar entrada y variables de entorno.
+- **Next.js 16** (App Router, Server Components, `proxy.ts` instead of `middleware.ts`).
+- **Supabase** via `@supabase/ssr` (cookie-based auth, RLS).
+- **Zod** for input and environment-variable validation.
 
-## Comandos
+## Commands
 
-- `npm run dev` — servidor de desarrollo.
-- `npm run typecheck` — chequeo de tipos.
+- `npm run dev` — development server.
+- `npm run typecheck` — type checking.
 - `npm run lint` — linter.
-- `npm run db:start` — Supabase local (Docker).
-- `npm run db:push` — aplica migraciones al proyecto enlazado.
-- `npm run db:types` — regenera `src/lib/supabase/database.types.ts`.
+- `npm run db:start` — local Supabase (Docker).
+- `npm run db:push` — apply migrations to the linked project.
+- `npm run db:types` — regenerate `src/lib/supabase/database.types.ts`.
 
-## Estructura clave
+## Key structure
 
-- `src/lib/supabase/client.ts` — cliente browser.
-- `src/lib/supabase/server.ts` — cliente server (respeta RLS). **Default.**
-- `src/lib/supabase/admin.ts` — cliente admin (bypassa RLS, `server-only`).
-- `src/lib/supabase/middleware.ts` — refresco de sesión + guard de rutas.
-- `src/lib/env.ts` — validación de env (separa cliente/servidor).
-- `proxy.ts` — entrypoint del proxy de Next 16.
-- `supabase/migrations/` — esquema versionado con RLS.
+- `src/lib/supabase/client.ts` — browser client.
+- `src/lib/supabase/server.ts` — server client (respects RLS). **Default.**
+- `src/lib/supabase/admin.ts` — admin client (bypasses RLS, `server-only`).
+- `src/lib/supabase/middleware.ts` — session refresh + route guard.
+- `src/lib/env.ts` — environment validation (splits client/server).
+- `proxy.ts` — Next 16 proxy entrypoint.
+- `supabase/migrations/` — versioned schema with RLS.
 
-## Reglas de seguridad
+## Skills (`.claude/skills/`)
 
-Antes de tocar auth, sesiones, clientes de Supabase, RLS, migraciones o claves,
-seguí el skill **`.claude/skills/supabase-security/SKILL.md`**. En resumen:
+This repo ships with several Claude Code skills:
 
-1. En server validá con `getClaims()`, nunca con `getSession()`.
-2. `SUPABASE_SECRET_KEY` jamás llega al browser; sólo vía `admin.ts`.
-3. RLS habilitado y forzado en toda tabla nueva; deny-by-default.
-4. El MCP de Supabase es para desarrollo, en `read_only`, nunca contra producción.
+- **`supabase`** — official Supabase skill (DB, Auth, RLS, CLI, MCP, security
+  checklist). Authoritative for anything Supabase. Verify against its changelog
+  before implementing.
+- **`supabase-security`** — conventions specific to this template (which client
+  to use, the Next 16 proxy, two-layer route guard, the project's `.mcp.json`).
+- **`clean-code`** — Clean Code principles for writing and reviewing code.
+- **`clean-ui`** — UI/UX design direction for this project. **All user-facing
+  interface work must follow this skill**: clarity over decoration, obvious
+  visual hierarchy, consistency, functional whitespace, minimal cognitive load,
+  and accessibility. Read it before building or changing any page or component.
+- **`find-skills`** — discover and install more skills from the ecosystem.
+
+Before touching auth, sessions, Supabase clients, RLS, migrations or keys, follow
+the **`supabase`** and **`supabase-security`** skills. In short:
+
+1. On the server validate with `getClaims()`, never `getSession()`.
+2. `SUPABASE_SECRET_KEY` never reaches the browser; only via `admin.ts`.
+3. RLS enabled and forced on every new table; deny-by-default.
+4. The Supabase MCP is for development, in `read_only`, never against production.
 
 ## MCP
 
-`.mcp.json` incluye el servidor de Supabase (hosted, read-only). Autenticá con
-`claude /mcp` la primera vez (OAuth, sin necesidad de personal access token).
+`.mcp.json` includes the Supabase server (hosted, read-only). Authenticate with
+`claude /mcp` the first time (OAuth, no personal access token required).

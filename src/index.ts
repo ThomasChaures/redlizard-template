@@ -19,10 +19,10 @@ import {
 import pc from "picocolors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// Tras el build, dist/ y template/ son hermanos dentro del paquete publicado.
+// After the build, dist/ and template/ are siblings inside the published package.
 const TEMPLATE_DIR = resolve(__dirname, "../template");
 
-// Archivos del template que viajan con prefijo "_" para no romper npm/git al publicar.
+// Template files shipped with a "_" prefix so they don't break npm/git on publish.
 const RENAME_MAP: Record<string, string> = {
   "_gitignore": ".gitignore",
   "_env.example": ".env.example",
@@ -35,7 +35,7 @@ type PkgManager = "npm" | "pnpm" | "yarn" | "bun";
 type CiProvider = "github" | "bitbucket" | "gitlab" | "none";
 
 function onCancel(): never {
-  cancel("Operación cancelada.");
+  cancel("Operation cancelled.");
   process.exit(0);
 }
 
@@ -55,7 +55,7 @@ async function copyTemplate(
 ): Promise<void> {
   await cp(TEMPLATE_DIR, targetDir, { recursive: true });
 
-  // Aplicar el preset de CI elegido y descartar la carpeta de presets.
+  // Apply the chosen CI preset and drop the presets folder.
   const presetsDir = join(targetDir, "_ci-presets");
   if (ci !== "none") {
     const chosen = join(presetsDir, ci);
@@ -68,7 +68,7 @@ async function copyTemplate(
   await renameAndReplace(targetDir, projectName);
 }
 
-// Recorre el árbol copiado, renombra los archivos "_*" y reemplaza placeholders.
+// Walk the copied tree, rename the "_*" files and replace placeholders.
 async function renameAndReplace(dir: string, projectName: string): Promise<void> {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
@@ -78,14 +78,14 @@ async function renameAndReplace(dir: string, projectName: string): Promise<void>
       await renameAndReplace(fullPath, projectName);
       continue;
     }
-    // Renombrar si corresponde.
+    // Rename if needed.
     let finalPath = fullPath;
     const mapped = RENAME_MAP[entry.name];
     if (mapped) {
       finalPath = join(dir, mapped);
       await rename(fullPath, finalPath);
     }
-    // Reemplazar placeholders sólo en archivos de texto.
+    // Replace placeholders only in text files.
     if (/\.(json|ts|tsx|js|jsx|css|md|sql|toml|env|example|txt|yml|yaml|html)$/i.test(finalPath) || basename(finalPath).startsWith(".")) {
       try {
         const content = await readFile(finalPath, "utf8");
@@ -93,7 +93,7 @@ async function renameAndReplace(dir: string, projectName: string): Promise<void>
           await writeFile(finalPath, content.replaceAll("{{PROJECT_NAME}}", projectName));
         }
       } catch {
-        /* binario o ilegible: lo ignoramos */
+        /* binary or unreadable: skip */
       }
     }
   }
@@ -108,35 +108,35 @@ async function main(): Promise<void> {
   console.log("");
   intro(pc.bgCyan(pc.black(" redlizard-template ")));
 
-  // Separar flags de argumentos posicionales.
+  // Split flags from positional arguments.
   const rawArgs = process.argv.slice(2);
   const flags = new Set(rawArgs.filter((a) => a.startsWith("-")));
   const positionals = rawArgs.filter((a) => !a.startsWith("-"));
   const nonInteractive =
     flags.has("--yes") || flags.has("-y") || !process.stdout.isTTY;
 
-  // 1) Nombre del proyecto (argv o prompt).
+  // 1) Project name (argv or prompt).
   const argName = positionals[0];
   let projectName = argName;
   if (!projectName) {
     if (nonInteractive) {
-      log.error("Falta el nombre del proyecto. Uso: redlizard-template <nombre> [--yes]");
+      log.error("Missing project name. Usage: redlizard-template <name> [--yes]");
       process.exit(1);
     }
     projectName = unwrap(
       await text({
-        message: "¿Nombre del proyecto?",
-        placeholder: "mi-app",
+        message: "Project name?",
+        placeholder: "my-app",
         validate: (v) =>
           !v
-            ? "Ingresá un nombre."
+            ? "Enter a name."
             : !isValidProjectName(v)
-              ? "Usá minúsculas, números, guiones o guiones bajos."
+              ? "Use lowercase letters, numbers, hyphens or underscores."
               : undefined,
       }),
     );
   } else if (!isValidProjectName(projectName)) {
-    log.error(`Nombre inválido: ${pc.red(projectName)} (minúsculas, números, - y _).`);
+    log.error(`Invalid name: ${pc.red(projectName)} (lowercase, numbers, - and _).`);
     process.exit(1);
   }
 
@@ -144,18 +144,18 @@ async function main(): Promise<void> {
   if (existsSync(targetDir)) {
     const dirContents = await readdir(targetDir).catch(() => []);
     if (dirContents.length > 0) {
-      log.error(`El directorio ${pc.red(projectName)} ya existe y no está vacío.`);
+      log.error(`Directory ${pc.red(projectName)} already exists and is not empty.`);
       process.exit(1);
     }
   }
 
-  // 2) Gestor de paquetes.
+  // 2) Package manager.
   const pm = (
     nonInteractive
       ? "npm"
       : unwrap(
           await select({
-            message: "¿Gestor de paquetes?",
+            message: "Package manager?",
             options: [
               { value: "npm", label: "npm" },
               { value: "pnpm", label: "pnpm" },
@@ -167,7 +167,7 @@ async function main(): Promise<void> {
         )
   ) as PkgManager;
 
-  // 3) Plataforma de CI/CD (qué archivos de pipeline generar).
+  // 3) CI/CD platform (which pipeline files to generate).
   const ciFlag = rawArgs
     .find((a) => a.startsWith("--ci="))
     ?.split("=")[1] as CiProvider | undefined;
@@ -178,60 +178,60 @@ async function main(): Promise<void> {
       ? "github"
       : (unwrap(
           await select({
-            message: "¿Plataforma de CI/CD? (deploy de migraciones)",
+            message: "CI/CD platform? (migration deploys)",
             options: [
               { value: "github", label: "GitHub Actions" },
               { value: "bitbucket", label: "Bitbucket Pipelines" },
               { value: "gitlab", label: "GitLab CI" },
-              { value: "none", label: "Ninguna por ahora" },
+              { value: "none", label: "None for now" },
             ],
             initialValue: "github",
           }),
         ) as CiProvider);
 
-  // 4) ¿Instalar dependencias e inicializar git?
+  // 4) Install dependencies and/or initialize git?
   const doInstall = nonInteractive
     ? false
-    : unwrap(await confirm({ message: "¿Instalar dependencias ahora?", initialValue: true }));
+    : unwrap(await confirm({ message: "Install dependencies now?", initialValue: true }));
   const doGit = nonInteractive
     ? false
-    : unwrap(await confirm({ message: "¿Inicializar repositorio git?", initialValue: true }));
+    : unwrap(await confirm({ message: "Initialize a git repository?", initialValue: true }));
 
-  // 4) Scaffolding.
+  // 5) Scaffolding.
   const s = spinner();
-  s.start("Generando el proyecto");
+  s.start("Generating the project");
   await mkdir(targetDir, { recursive: true });
   await copyTemplate(targetDir, projectName, ci);
-  s.stop("Proyecto generado ✓");
+  s.stop("Project generated ✓");
 
   if (doGit) {
-    s.start("Inicializando git");
+    s.start("Initializing git");
     const ok = run("git", ["init"], targetDir) && run("git", ["add", "-A"], targetDir);
-    s.stop(ok ? "Git inicializado ✓" : "git no disponible (omitido)");
+    s.stop(ok ? "Git initialized ✓" : "git not available (skipped)");
   }
 
   if (doInstall) {
-    s.start(`Instalando dependencias con ${pm}`);
+    s.start(`Installing dependencies with ${pm}`);
     const ok = run(pm, ["install"], targetDir);
-    s.stop(ok ? "Dependencias instaladas ✓" : `Falló ${pm} install (instalá manualmente)`);
+    s.stop(ok ? "Dependencies installed ✓" : `${pm} install failed (install manually)`);
   }
 
-  // 5) Próximos pasos.
+  // 6) Next steps.
   const runCmd = pm === "npm" ? "npm run" : pm;
   note(
     [
       `${pc.dim("1.")} cd ${projectName}`,
-      `${pc.dim("2.")} Copiá tus credenciales en ${pc.cyan(".env.local")}`,
+      `${pc.dim("2.")} Copy your credentials into ${pc.cyan(".env.local")}`,
       `${pc.dim("   ")} (Supabase Dashboard → Connect → App Frameworks)`,
-      `${pc.dim("3.")} ${pc.cyan("supabase login")} && ${pc.cyan("supabase link")} y aplicá las migraciones:`,
+      `${pc.dim("3.")} ${pc.cyan("supabase login")} && ${pc.cyan("supabase link")}, then apply the migrations:`,
       `${pc.dim("   ")} ${pc.cyan("supabase db push")}`,
-      `${pc.dim("4.")} Autenticá el MCP de Supabase en Claude Code: ${pc.cyan("claude /mcp")}`,
+      `${pc.dim("4.")} Authenticate the Supabase MCP in Claude Code: ${pc.cyan("claude /mcp")}`,
       `${pc.dim("5.")} ${pc.cyan(`${runCmd} dev`)}`,
     ].join("\n"),
-    "Próximos pasos",
+    "Next steps",
   );
 
-  outro(pc.green(`Listo. ${pc.bold(projectName)} quedó configurado con seguridad e2e 🛡️`));
+  outro(pc.green(`Done. ${pc.bold(projectName)} is set up with end-to-end security 🛡️`));
 }
 
 main().catch((err) => {
