@@ -4,7 +4,7 @@ import { clientEnv } from "@/lib/env";
 import type { Database } from "@/lib/supabase/database.types";
 
 // Routes reachable without a session. Everything else requires an authenticated user.
-const PUBLIC_PATHS = ["/", "/login", "/auth", "/error"];
+const PUBLIC_PATHS = ["/", "/login", "/signup", "/auth", "/error"];
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.some(
@@ -45,9 +45,8 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   );
 
   // Validates the JWT against the project's public keys (doesn't trust the raw cookie).
-  const {
-    data: { claims },
-  } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims ?? null;
 
   const { pathname } = request.nextUrl;
 

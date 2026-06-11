@@ -1,128 +1,35 @@
-:root {
-  --bg: #0b0c0e;
-  --surface: #15171a;
-  --border: #262a30;
-  --text: #e8eaed;
-  --muted: #9aa3ad;
-  --accent: #3ecf8e; /* Supabase green */
-  --danger: #ef4444;
-  --radius: 10px;
-  --maxw: 28rem;
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — light, monochrome. Ink on paper.
+   (see .claude/skills/clean-ui/references/design-tokens.md)
+   Tailwind v4 generates utilities from these: bg-paper, text-ink,
+   border-line, text-muted, bg-danger-soft, etc.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-paper: #f7f7f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f0f1;
+  --color-line: #e5e5e7;
+  --color-line-strong: #d6d6d9;
+  --color-ink: #18181b;
+  --color-ink-2: #2e2e33;
+  --color-muted: #5f5f66;
+  --color-faint: #8e8e95;
+  --color-danger: #b42323;
+  --color-danger-soft: #faf1f1;
+  --color-danger-line: #e8caca;
+  --color-success: #2f6b46;
+  --color-success-soft: #f0f5f2;
+
+  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.05), 0 4px 16px rgba(24, 24, 27, 0.06);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
-
-main {
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 2rem 1.25rem;
-}
-
-.card {
-  width: 100%;
-  max-width: var(--maxw);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2rem;
-}
-
-h1 {
-  font-size: 1.5rem;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.01em;
-}
-
-p.muted {
-  color: var(--muted);
-  margin-top: 0;
-}
-
-label {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin: 1rem 0 0.35rem;
-}
-
-input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 0.95rem;
-}
-
-input:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-
-.row {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-button {
-  flex: 1;
-  padding: 0.65rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #05130c;
-}
-
-button:hover {
-  filter: brightness(1.08);
-}
-
-a {
-  color: var(--accent);
-}
-
-.error {
-  color: var(--danger);
-  font-size: 0.9rem;
-  margin-top: 1rem;
-}
-
-.kv {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: var(--muted);
-  word-break: break-all;
+@layer base {
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
 }

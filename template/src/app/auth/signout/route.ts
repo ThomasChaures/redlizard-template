@@ -5,9 +5,8 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
 
   // Only sign out if there's actually a valid user.
-  const {
-    data: { claims },
-  } = await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims ?? null;
 
   if (claims) {
     await supabase.auth.signOut();

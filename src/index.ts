@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cp, mkdir, readFile, writeFile, rename, readdir, stat, rm } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile, rename, readdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve, basename } from "node:path";

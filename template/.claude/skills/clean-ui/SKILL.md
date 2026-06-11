@@ -323,3 +323,12 @@ If any answer is no, simplify further.
 A clean UI is not defined by minimalism.
 
 A clean UI is defined by the absence of unnecessary complexity.
+
+---
+
+# Project Design File
+
+The concrete tokens (colors, type scale, spacing, components) for THIS project
+live in [references/design-tokens.md](references/design-tokens.md). **Read it
+before building any view.** Theme is light and monochrome (grayscale only, semantic states excepted); never introduce
+third-party brand colors.

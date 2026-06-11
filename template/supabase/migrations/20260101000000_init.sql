@@ -58,3 +58,9 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row
   execute function public.handle_new_user();
+
+-- Postgres grants EXECUTE to PUBLIC by default on new functions, which makes
+-- any SECURITY DEFINER function in an exposed schema a public endpoint.
+-- This is a trigger function (not callable via the Data API), but we revoke
+-- anyway as defense in depth.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
